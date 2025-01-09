@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProjectAPI.Data;
 using ProjectAPI.Models.DTOs;
+using ProjectAPI.Repository;
 
 namespace ProjectAPI.Controllers
 {
@@ -11,15 +12,17 @@ namespace ProjectAPI.Controllers
     public class RegionsController : ControllerBase
     {
         private readonly BrianRussellDbContext dbContext;
+        private readonly IRegionRepository regionRepository;
 
-        public RegionsController(BrianRussellDbContext dbContext)
+        public RegionsController(BrianRussellDbContext dbContext, IRegionRepository regionRepository)
         {
             this.dbContext = dbContext;
+            this.regionRepository = regionRepository;
         }
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var regionsDomain = await dbContext.Regions.ToListAsync();
+            var regionsDomain = await regionRepository.GetAllAsync();
 
             var regionsDto = new List<RegionDto>();
             foreach (var regionDomain in regionsDomain)
@@ -42,7 +45,7 @@ namespace ProjectAPI.Controllers
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {// var region = dbContext.Regions.FirstOrDefault(x=> x.Id == id);
             // Get region domain model from database
-            var regionDomain = await dbContext.Regions.FindAsync(id);
+            var regionDomain = await regionRepository.GetByIdAsync(id);
             if (regionDomain == null)
             {
                 return NotFound();
@@ -72,8 +75,7 @@ namespace ProjectAPI.Controllers
                 RegionImageUrl = addRegionRequestDto.RegionImageUrl
             };
             // Use Domain Mode to create Region
-            await dbContext.Regions.AddAsync(regionDomainModel);
-            await dbContext.SaveChangesAsync();
+         regionDomainModel= await regionRepository.CreateAsync(regionDomainModel);
 
             // Map Domain Model back to Dto
             var regionDto = new RegionDto
@@ -91,18 +93,21 @@ namespace ProjectAPI.Controllers
         [HttpPut]
         [Route("{id:Guid}")]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateRegionRequestDto updateRegionRequestDto)
-        {//Check if region exists
-            var regionDomainModel = await  dbContext.Regions.FirstOrDefaultAsync(x => x.Id == id);
+        {   //Map DTO to Domain Model
+            var regionDomainModel = new Region
+            {
+                Code = updateRegionRequestDto.Code,
+                Name= updateRegionRequestDto.Name,
+                RegionImageUrl= updateRegionRequestDto.RegionImageUrl
+            };
+
+            //Check if region exists
+           regionDomainModel = await regionRepository.UpdateAsync(id, regionDomainModel);
             if (regionDomainModel == null)
             {
                 return NotFound();
             }
-            // Map DTO to Domain Model
-            regionDomainModel.Code = updateRegionRequestDto.Code;
-            regionDomainModel.Name = updateRegionRequestDto.Name;
-            regionDomainModel.RegionImageUrl = updateRegionRequestDto.RegionImageUrl;
-
-            await dbContext.SaveChangesAsync();
+            
             var regionDto = new RegionDto
             {
                 Id = regionDomainModel.Id,
