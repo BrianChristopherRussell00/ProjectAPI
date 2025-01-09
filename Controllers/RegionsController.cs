@@ -125,14 +125,13 @@ namespace ProjectAPI.Controllers
         [Route("{id:Guid}")]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
-            var regionDomainModel = await dbContext.Regions.FirstOrDefaultAsync(x => x.Id == id);
+         var regionDomainModel= await regionRepository.DeleteAsync(id);
          if (regionDomainModel == null)
             {
                 return NotFound();
             }
             //Delete Region
-            dbContext.Regions.Remove(regionDomainModel);
-           await dbContext.SaveChangesAsync();
+        
 
             //Return deleted Region back
             //Map Domain Model to DTO
