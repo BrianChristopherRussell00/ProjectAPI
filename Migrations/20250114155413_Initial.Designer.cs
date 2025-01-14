@@ -12,8 +12,8 @@ using ProjectAPI.Data;
 namespace ProjectAPI.Migrations
 {
     [DbContext(typeof(BrianRussellDbContext))]
-    [Migration("20250106195833_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250114155413_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -38,6 +38,23 @@ namespace ProjectAPI.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Difficulties");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("76bdad60-43f7-45d9-a191-80cc4599fdd2"),
+                            Name = "Easy "
+                        },
+                        new
+                        {
+                            Id = new Guid("66ef759f-4193-43ca-9f73-50da9d3a7629"),
+                            Name = "Medium "
+                        },
+                        new
+                        {
+                            Id = new Guid("aa022ac3-f5ca-4559-b30e-b735d50d7eff"),
+                            Name = "Hard "
+                        });
                 });
 
             modelBuilder.Entity("ProjectAPI.Models.Domain.Walk", b =>
@@ -92,6 +109,36 @@ namespace ProjectAPI.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Regions");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("caca6862-3fee-4746-b543-9613ab24c471"),
+                            Code = "SCRT",
+                            Name = "Scranton",
+                            RegionImageUrl = ""
+                        },
+                        new
+                        {
+                            Id = new Guid("37822212-77c4-4c26-8726-1db46bbd7b06"),
+                            Code = "MUN",
+                            Name = "Muncy",
+                            RegionImageUrl = ""
+                        },
+                        new
+                        {
+                            Id = new Guid("08bec0f6-b480-4a6e-874c-524507d70bcb"),
+                            Code = "YK",
+                            Name = "York",
+                            RegionImageUrl = ""
+                        },
+                        new
+                        {
+                            Id = new Guid("2974dcab-9fc7-4b1d-aecf-93cc27e3c93b"),
+                            Code = "WPT",
+                            Name = "Williamsport",
+                            RegionImageUrl = ""
+                        });
                 });
 
             modelBuilder.Entity("ProjectAPI.Models.Domain.Walk", b =>
