@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using ProjectAPI.Data;
+using ProjectAPI.Mappings;
 using ProjectAPI.Repository;
 
 namespace ProjectAPI
@@ -21,7 +22,7 @@ namespace ProjectAPI
             builder.Services.AddDbContext<BrianRussellDbContext>(options =>  
             options.UseSqlServer(builder.Configuration.GetConnectionString("BRConnectionString")));
             builder.Services.AddScoped<IRegionRepository, SQLRegionRepository>();
-
+            builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
