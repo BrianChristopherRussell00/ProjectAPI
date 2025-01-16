@@ -75,58 +75,74 @@ namespace ProjectAPI.Controllers
         //POST To Create New Region
         //POST: https:// localhost:portnumber/api/regions
         [HttpPost]
-        public async Task <IActionResult> Create([FromBody] AddRegionRequestDto addRegionRequestDto)
+        public async Task<IActionResult> Create([FromBody] AddRegionRequestDto addRegionRequestDto)
         {
-            var regionDomainModel = mapper.Map<Region>(addRegionRequestDto);
-            // Map or Convert DTO to Domain Model
-            //var regionDomainModel = new Region
-            //{
-            //    Code = addRegionRequestDto.Code,
-            //    Name = addRegionRequestDto.Name,
-            //    RegionImageUrl = addRegionRequestDto.RegionImageUrl
-            //};
-            // Use Domain Mode to create Region
-         regionDomainModel= await regionRepository.CreateAsync(regionDomainModel);
+            if (ModelState.IsValid)
+            {
 
-            // Map Domain Model back to Dto
-            //var regionDto = new RegionDto
-            //{
-            //    Id = regionDomainModel.Id,
-            //    Code = regionDomainModel.Code,
-            //    Name = regionDomainModel.Name,
-            //    RegionImageUrl = regionDomainModel.RegionImageUrl
-            //};
-            var regionDto =mapper.Map<RegionDto>(regionDomainModel);
-            return CreatedAtAction(nameof(GetById), new { id = regionDto.Id }, regionDto);
+
+                var regionDomainModel = mapper.Map<Region>(addRegionRequestDto);
+                // Map or Convert DTO to Domain Model
+                //var regionDomainModel = new Region
+                //{
+                //    Code = addRegionRequestDto.Code,
+                //    Name = addRegionRequestDto.Name,
+                //    RegionImageUrl = addRegionRequestDto.RegionImageUrl
+                //};
+                // Use Domain Mode to create Region
+                regionDomainModel = await regionRepository.CreateAsync(regionDomainModel);
+
+                // Map Domain Model back to Dto
+                //var regionDto = new RegionDto
+                //{
+                //    Id = regionDomainModel.Id,
+                //    Code = regionDomainModel.Code,
+                //    Name = regionDomainModel.Name,
+                //    RegionImageUrl = regionDomainModel.RegionImageUrl
+                //};
+                var regionDto = mapper.Map<RegionDto>(regionDomainModel);
+                return CreatedAtAction(nameof(GetById), new { id = regionDto.Id }, regionDto);
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
         }
-
         //Update Region
         //PUT: https:// localhost:portnumber/api/regions{id}
         [HttpPut]
         [Route("{id:Guid}")]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateRegionRequestDto updateRegionRequestDto)
-        {   
-            
-            
-            //Map DTO to Domain Model
-            var regionDomainModel = new Region
+        {
+            if (ModelState.IsValid)
             {
-                Code = updateRegionRequestDto.Code,
-                Name = updateRegionRequestDto.Name,
-                RegionImageUrl = updateRegionRequestDto.RegionImageUrl
-            };
+                //Map DTO to Domain Model
+                var regionDomainModel = new Region
+                {
+                    Code = updateRegionRequestDto.Code,
+                    Name = updateRegionRequestDto.Name,
+                    RegionImageUrl = updateRegionRequestDto.RegionImageUrl
+                };
 
-            //Check if region exists
+                //Check if region exists
 
 
-            var regionDto = new RegionDto
+                var regionDto = new RegionDto
+                {
+                    Id = regionDomainModel.Id,
+                    Code = regionDomainModel.Code,
+                    Name = regionDomainModel.Name,
+                    RegionImageUrl = regionDomainModel.RegionImageUrl
+                };
+                return Ok(regionDto);
+
+            }
+            else
             {
-                Id = regionDomainModel.Id,
-                Code = regionDomainModel.Code,
-                Name = regionDomainModel.Name,
-                RegionImageUrl = regionDomainModel.RegionImageUrl
-            };
-            return Ok(regionDto);
+                return BadRequest(ModelState);
+            }
+
+
 
         }
 

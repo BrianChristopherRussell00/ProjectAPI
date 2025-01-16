@@ -26,14 +26,19 @@ namespace ProjectAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody]AddWalkRequestDto addWalkRequestDto)
         {
-            // Map DTO to Domain Model
-            var walkDomainModel = mapper.Map<Walk>(addWalkRequestDto);
-            await walkRepository.CreateAsync(walkDomainModel);
+            if (ModelState.IsValid)
+            {
 
-            //Map Domain Model to DTO   
 
-            return Ok(mapper.Map<WalkDto>(walkDomainModel));
-        
+                // Map DTO to Domain Model
+                var walkDomainModel = mapper.Map<Walk>(addWalkRequestDto);
+                await walkRepository.CreateAsync(walkDomainModel);
+
+                //Map Domain Model to DTO   
+
+                return Ok(mapper.Map<WalkDto>(walkDomainModel));
+            }
+            return BadRequest(ModelState);
         
         }
 
@@ -70,17 +75,23 @@ namespace ProjectAPI.Controllers
 
         public async Task<IActionResult> Update([FromRoute]Guid id, UpdateWalkRequestDto updateWalkRequestDto)
         {
-            //Map DTO to Domain Model   
-            var walkDomainModel = mapper.Map<Walk>(updateWalkRequestDto);   
-            await walkRepository.UpdateAsync(id, walkDomainModel);  
-                
-            if (walkDomainModel == null)
+            if (ModelState.IsValid)
             {
-                return NotFound();
+
+
+                //Map DTO to Domain Model   
+                var walkDomainModel = mapper.Map<Walk>(updateWalkRequestDto);
+                await walkRepository.UpdateAsync(id, walkDomainModel);
+
+                if (walkDomainModel == null)
+                {
+                    return NotFound();
+                }
+                //Map Domain Model to DTO   
+                return Ok(mapper.Map<WalkDto>(walkDomainModel));
+            }   
+            return BadRequest(ModelState);
             }
-            //Map Domain Model to DTO   
-            return Ok(mapper.Map<WalkDto>(walkDomainModel));
-        }
         //Delete a Walk By Id   
         //DELETE: /api/Walks{id}        
         [HttpDelete]
