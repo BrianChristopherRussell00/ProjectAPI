@@ -22,6 +22,8 @@ namespace ProjectAPI
             builder.Services.AddDbContext<BrianRussellDbContext>(options =>  
             options.UseSqlServer(builder.Configuration.GetConnectionString("BRConnectionString")));
             builder.Services.AddScoped<IRegionRepository, SQLRegionRepository>();
+            builder.Services.AddScoped<IWalkRepository, SQLWalkRepository>();
+
             builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
             var app = builder.Build();
 
