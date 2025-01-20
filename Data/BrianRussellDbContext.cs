@@ -7,7 +7,7 @@ namespace ProjectAPI.Data
 {
     public class BrianRussellDbContext : DbContext
     {
-        public BrianRussellDbContext(DbContextOptions dbContextOptions) : base(dbContextOptions)
+        public BrianRussellDbContext(DbContextOptions<BrianRussellDbContext> dbContextOptions) : base(dbContextOptions)
         {
 
         }
