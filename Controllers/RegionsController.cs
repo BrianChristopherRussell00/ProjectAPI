@@ -25,6 +25,7 @@ namespace ProjectAPI.Controllers
             this.mapper = mapper;
         }
         [HttpGet]
+        [Authorize(Roles ="Reader")]
         public async Task<IActionResult> GetAll()
         {
             var regionsDomain = await regionRepository.GetAllAsync();
@@ -52,6 +53,7 @@ namespace ProjectAPI.Controllers
         //GET: https:// localhost:portnumber/api/regions
         [HttpGet]
         [Route("{id:Guid}")]
+        [Authorize(Roles = "Reader")]
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {// var region = dbContext.Regions.FirstOrDefault(x=> x.Id == id);
             // Get region domain model from database
@@ -77,6 +79,7 @@ namespace ProjectAPI.Controllers
         //POST To Create New Region
         //POST: https:// localhost:portnumber/api/regions
         [HttpPost]
+        [Authorize(Roles ="Writer")]
         public async Task<IActionResult> Create([FromBody] AddRegionRequestDto addRegionRequestDto)
         {
             if (ModelState.IsValid)
@@ -114,6 +117,8 @@ namespace ProjectAPI.Controllers
         //PUT: https:// localhost:portnumber/api/regions{id}
         [HttpPut]
         [Route("{id:Guid}")]
+        [Authorize(Roles = "Writer")]
+
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateRegionRequestDto updateRegionRequestDto)
         {
             if (ModelState.IsValid)
@@ -144,14 +149,14 @@ namespace ProjectAPI.Controllers
                 return BadRequest(ModelState);
             }
 
-
-
         }
 
         //Delete Region
         //DELETE: https:// localhost:portnumber/api/regions{id}
         [HttpDelete]
         [Route("{id:Guid}")]
+        [Authorize(Roles = "Writer,Reader")]
+
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
          var regionDomainModel= await regionRepository.DeleteAsync(id);
