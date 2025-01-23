@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ProjectAPI.Models.DTOs;
+using ProjectAPI.Repository;
 
 namespace ProjectAPI.Controllers
 {
@@ -10,10 +11,12 @@ namespace ProjectAPI.Controllers
     public class AuthController : ControllerBase
     {
         private readonly UserManager<IdentityUser> userManger;
+        private readonly ITokenRepository tokenRepository;
 
-        public AuthController(UserManager<IdentityUser> userManger)
+        public AuthController(UserManager<IdentityUser> userManger, ITokenRepository tokenRepository)
         {
             this.userManger = userManger;
+            this.tokenRepository = tokenRepository;
         }
 
         //POST: /api/Auth/Register      
@@ -49,6 +52,42 @@ namespace ProjectAPI.Controllers
                 return BadRequest("Something went wrong");
 
             }
+        //POST: /api/Auth/Login
+        [HttpPost]
+        [Route("Login")]
+        public async Task<IActionResult> Login([FromBody] LoginRequestDto loginRequestDto)
+        {
+            var user = await userManger.FindByEmailAsync(loginRequestDto.Username);
+        
+              if (user != null)
+            {
+            var checkPasswordResult = await userManger.CheckPasswordAsync(user,loginRequestDto.Password);
+               if (checkPasswordResult)
+                {//Get Roles for this user  
+               var roles =  await userManger.GetRolesAsync(user);
+                        
+                    
+                    if (roles != null)
+                    {
+                        //Create Token  
 
-        }
+                    var jwtToken = tokenRepository.CreateJWTToken(user,roles.ToList());
+                        var response = new LoginResponseDto
+                        {
+                            JwtToken = jwtToken
+                        };
+                        return Ok(jwtToken);
+
+                    }
+
+                }
+            }
+            return BadRequest("Username or Password is incorrect"); 
+                
+                
+                
+                }
+
+    }   
+    
     }
