@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using ProjectAPI.Data;
 using ProjectAPI.Models.DTOs;
 using ProjectAPI.Repository;
+using System.Text.Json;
 
 namespace ProjectAPI.Controllers
 {
@@ -17,37 +18,53 @@ namespace ProjectAPI.Controllers
         private readonly BrianRussellDbContext dbContext;
         private readonly IRegionRepository regionRepository;
         private readonly IMapper mapper;
+        private readonly ILogger<RegionsController> logger;
 
-        public RegionsController(BrianRussellDbContext dbContext, IRegionRepository regionRepository,IMapper mapper)
+        public RegionsController(BrianRussellDbContext dbContext, IRegionRepository regionRepository,IMapper mapper, ILogger<RegionsController>logger)
         {
             this.dbContext = dbContext;
             this.regionRepository = regionRepository;
             this.mapper = mapper;
+            this.logger = logger;
         }
         [HttpGet]
         [Authorize(Roles ="Reader")]
         public async Task<IActionResult> GetAll()
         {
-            var regionsDomain = await regionRepository.GetAllAsync();
+            try
+            {   
+                throw new Exception("This is a custom exception");
+               
+                var regionsDomain = await regionRepository.GetAllAsync();
 
-            //var regionsDto = new List<RegionDto>();
-            //foreach (var regionDomain in regionsDomain)
-            //{
-            //    regionsDto.Add(new RegionDto()
-            //    {
-            //        Id = regionDomain.Id,
-            //        Code = regionDomain.Code,
-            //        Name = regionDomain.Name,
-            //        RegionImageUrl = regionDomain.RegionImageUrl
 
-            //    });
+                //var regionsDto = new List<RegionDto>();
+                //foreach (var regionDomain in regionsDomain)
+                //{
+                //    regionsDto.Add(new RegionDto()
+                //    {
+                //        Id = regionDomain.Id,
+                //        Code = regionDomain.Code,
+                //        Name = regionDomain.Name,
+                //        RegionImageUrl = regionDomain.RegionImageUrl
 
-            //}
+                //    });
 
-            //Return DTOs   
-         var regionsDto = mapper.Map<List<RegionDto>>(regionsDomain);
+                //}
 
-            return Ok(regionsDto);
+                //Return DTOs
+                logger.LogInformation($"Finished GetAllRegions request with data: {JsonSerializer.Serialize(regionsDomain)}");
+
+                var regionsDto = mapper.Map<List<RegionDto>>(regionsDomain);
+
+                return Ok(regionsDto);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, ex.Message);
+                throw;
+            }
+         
         }
         //GET SINGLE REGION (Get Region By ID)
         //GET: https:// localhost:portnumber/api/regions

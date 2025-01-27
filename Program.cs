@@ -9,6 +9,7 @@ using Microsoft.OpenApi.Models;
 using ProjectAPI.Data;
 using ProjectAPI.Mappings;
 using ProjectAPI.Repository;
+using Serilog;
 using System.Text;
 
 namespace ProjectAPI
@@ -20,6 +21,13 @@ namespace ProjectAPI
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            var logger = new LoggerConfiguration()
+            .WriteTo.Console()
+            .MinimumLevel.Warning()
+            .CreateLogger();
+
+            builder.Logging.ClearProviders();   
+            builder.Logging.AddSerilog(logger);
 
             builder.Services.AddControllers();
             builder.Services.AddHttpContextAccessor();
