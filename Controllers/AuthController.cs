@@ -49,45 +49,45 @@ namespace ProjectAPI.Controllers
                     return Ok("User was registered! Please Login.");
                 }
             }
-                return BadRequest("Something went wrong");
+            return BadRequest("Something went wrong");
 
-            }
+        }
         //POST: /api/Auth/Login
         [HttpPost]
         [Route("Login")]
         public async Task<IActionResult> Login([FromBody] LoginRequestDto loginRequestDto)
         {
             var user = await userManger.FindByEmailAsync(loginRequestDto.Username);
-        
-              if (user != null)
+
+            if (user != null)
             {
-            var checkPasswordResult = await userManger.CheckPasswordAsync(user,loginRequestDto.Password);
-               if (checkPasswordResult)
+                var checkPasswordResult = await userManger.CheckPasswordAsync(user, loginRequestDto.Password);
+                if (checkPasswordResult)
                 {//Get Roles for this user  
-               var roles =  await userManger.GetRolesAsync(user);
-                        
-                    
+                    var roles = await userManger.GetRolesAsync(user);
+
+
                     if (roles != null)
                     {
                         //Create Token  
 
-                    var jwtToken = tokenRepository.CreateJWTToken(user,roles.ToList());
+                        var jwtToken = tokenRepository.CreateJWTToken(user, roles.ToList());
                         var response = new LoginResponseDto
                         {
                             JwtToken = jwtToken
                         };
-                        return Ok(jwtToken);
+                        return Ok(response);
 
                     }
 
                 }
             }
-            return BadRequest("Username or Password is incorrect"); 
-                
-                
-                
-                }
+            return BadRequest("Username or Password is incorrect");
 
-    }   
-    
+
+
+        }
+
     }
+
+}

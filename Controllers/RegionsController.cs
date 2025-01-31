@@ -33,7 +33,7 @@ namespace ProjectAPI.Controllers
         {
             try
             {   
-                throw new Exception("This is a custom exception");
+                
                
                 var regionsDomain = await regionRepository.GetAllAsync();
 
