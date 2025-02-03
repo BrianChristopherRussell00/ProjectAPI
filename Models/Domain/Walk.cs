@@ -1,7 +1,10 @@
-﻿namespace ProjectAPI.Models.Domain
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ProjectAPI.Models.Domain
 {
     public class Walk
     {
+        [Key]
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }

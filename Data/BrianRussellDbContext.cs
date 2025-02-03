@@ -19,9 +19,10 @@ namespace ProjectAPI.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<Walk>().HasNoKey();  // Mark the entity as keyless
-                                                     //Seed data for difficulties 
-                                                     // Easy, Medium, Hard
+            modelBuilder.Entity<Walk>().HasKey(w => w.Id);
+            // Mark the entity as keyless
+            //Seed data for difficulties 
+            // Easy, Medium, Hard
             var difficulties = new List<Difficulty>()
         {
             new Difficulty()
